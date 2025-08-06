@@ -1,7 +1,7 @@
 # SMS Fraud Detector: Technical Architecture and Implementation
-![Real-time SMS Detection Loading](demo/notif-loading.jpg)
+![Real-time SMS Detection Loading](demos/notif-loading.jpg)
 
-![Detection Result](demo/notif-ready.jpg)
+![Detection Result](demos/notif-ready.jpg)
 
 ## Executive Summary
 
