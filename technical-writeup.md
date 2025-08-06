@@ -1,0 +1,181 @@
+# SMS Fraud Detector: Technical Architecture and Implementation
+![Real-time SMS Detection Loading](demo/notif-loading.jpg)
+
+![Detection Result](demo/notif-ready.jpg)
+
+## Executive Summary
+
+This document presents the technical architecture and implementation details of an SMS fraud detection Android application that leverages local large language models (LLMs) for privacy-preserving fraud detection. The system addresses the growing sophistication of SMS scam messages in Finland and globally by providing real-time, on-device analysis with explainable AI capabilities. The solution demonstrates significant improvements in fraud detection accuracy through fine-tuning techniques while maintaining complete user privacy through local processing.
+
+## 1. Introduction and Problem Statement
+
+SMS fraud has become increasingly sophisticated, making traditional rule-based detection methods insufficient. The challenge lies not only in accurate detection but also in providing explainable results to users while maintaining privacy and security. This project aimed to create a mobile application that uses locally-deployed LLMs to detect SMS fraud messages, eliminating the need to transmit potentially sensitive messages to external servers.
+
+The core innovation lies in combining the explanatory power of LLMs with privacy-preserving local processing, addressing a critical gap in existing solutions that typically rely on cloud-based processing or simple pattern matching.
+
+## 2. System Architecture
+
+
+### 2.1 Core Components
+
+**SMS Monitoring Service**: A background service that intercepts incoming SMS messages using Android's broadcast receiver pattern. The service implements a queue-based processing system to handle multiple messages sequentially, preventing resource conflicts during LLM inference.
+
+**Fraud Detection Engine**: The central processing unit that combines rule-based detection with LLM inference. Messages are first filtered through lightweight pattern matching before being processed by the LLM for comprehensive analysis.
+
+**Local LLM Integration**: Manages on-device model execution using optimized inference engines. The system supports model downloading, configuration, and runtime management without external dependencies.
+
+**Privacy-First Data Storage**: All message analysis results are stored locally using Android Room database, ensuring no data leaves the device.
+
+## 3. Gemma 3n Integration and Implementation
+
+### 3.1 Model Selection and Deployment
+
+The application integrates Google's Gemma-3n-E4B-it model as the primary inference engine for fraud detection. This model was selected for several key reasons:
+
+- **Efficiency**: Optimized for mobile deployment with reduced memory footprint
+- **Performance**: Strong natural language understanding capabilities suitable for SMS content analysis
+- **Local Execution**: Designed for on-device inference without cloud dependencies
+- **Instruction Following**: Excellent at following structured prompts for consistent output formatting
+
+### 3.2 Model Fine-tuning Process
+
+The most significant technical challenge involved creating a robust fine-tuning pipeline to improve fraud detection accuracy:
+
+**Dataset Creation Strategy**:
+- Started with 1,500 real SMS messages from personal history
+- Applied privacy-preserving anonymization (randomized phone numbers, names)
+- Addressed class imbalance by generating 800 synthetic fraud messages using Gemma-3:12b
+- Created diversity through 52 fraud themes, 4 writing styles, 2 languages, and varying message lengths
+- Final dataset: 2,612 messages with balanced representation
+
+**Fine-tuning Methodology**:
+- Initial attempts with GRPO (Generalized Reward-based Policy Optimization) showed limited success due to GPU resource constraints
+- Implemented PEFT (Parameter-Efficient Fine-Tuning) with LoRA (Low-Rank Adaptation)
+- Multiple dataset iterations to address quality issues (e.g., unrealistic dates from anonymization process)
+- Each dataset improvement cycle resulted in measurable performance gains
+
+### 3.3 Performance Results
+
+The fine-tuning process achieved substantial improvements over the base model:
+
+**Fine-tuned Model Performance**:
+- Accuracy: 87.40% (vs. 75.19% base model)
+- Precision: 72.12% (vs. 56.14% base model)  
+- Recall: 94.94% (vs. 81.01% base model)
+- F1-score: 81.97% (vs. 66.32% base model)
+- ROC-AUC: 95.60% (vs. 84.03% base model)
+
+The results demonstrate significant improvement across all metrics, with particularly notable gains in precision and overall accuracy.
+
+## 4. Technical Challenges and Solutions
+
+### 4.1 Real-time Processing with Latency Constraints
+
+**Challenge**: LLM inference latency could impact user experience and system performance with high message volumes.
+
+**Solution**: Implemented a sophisticated queue-based processing system:
+- Sequential message processing to prevent resource conflicts
+- Background service architecture for non-blocking operation
+- Configurable automatic/manual detection modes
+- Integration with Android's native Share functionality for on-demand analysis
+
+### 4.2 Memory and Resource Management
+
+**Challenge**: Mobile devices have limited computational resources for LLM execution.
+
+**Solution**: 
+- Selected memory-efficient model variants (Gemma-3n-E4B-it)
+- Implemented lazy loading and model lifecycle management
+- Optimized inference parameters for mobile deployment
+- Background processing queue prevents resource exhaustion
+
+### 4.3 Privacy and Security Implementation
+
+**Challenge**: SMS messages contain highly sensitive personal information.
+
+**Solution**:
+- Complete on-device processing with no external network calls
+- Local data storage using encrypted Android Room database
+- Anonymization techniques for dataset creation
+- Transparent privacy controls in user interface
+
+### 4.4 Model Output Consistency
+
+**Challenge**: Ensuring reliable, parseable output format from LLM for downstream processing.
+
+**Solution**:
+- Developed structured prompting techniques with clear format specifications
+- Implemented robust output parsing with fallback mechanisms
+- Created validation layers for model responses
+- Iterative prompt engineering to improve consistency
+
+## 5. Android Application Architecture
+
+### 5.1 User Interface Design
+
+Built using Jetpack Compose with Material 3 design principles:
+- **Onboarding Flow**: Guided setup for permissions and privacy explanation
+- **Real-time Notifications**: Instant fraud alerts and safe message confirmations
+- **Message History**: Comprehensive review interface with manual flagging capabilities
+- **Model Management**: In-app LLM configuration and debugging tools
+
+### 5.2 Permission and Integration Management
+
+The application carefully manages Android permissions:
+- Runtime permission requests for SMS access and notifications
+- Transparent permission explanations during onboarding
+- Graceful degradation when permissions are denied
+- Integration with Android's Share system for external text analysis
+
+### 5.3 Background Processing Architecture
+
+Implemented using Android's modern background processing patterns:
+- Foreground service for SMS monitoring
+- WorkManager for scheduled tasks
+- Proper lifecycle management to prevent battery drain
+- Queue-based processing to handle message bursts
+
+## 6. Evaluation and Results Analysis
+
+### 6.1 Performance Metrics
+
+The evaluation process revealed several key insights:
+
+1. **Accuracy Improvement**: The 12.21 percentage point improvement in accuracy demonstrates the effectiveness of domain-specific fine-tuning
+2. **Recall Optimization**: High recall (94.94%) ensures minimal missed fraud cases, critical for security applications
+3. **Precision Balance**: While precision could be higher, the current level represents a good balance between false positives and security
+
+### 6.2 Qualitative Assessment
+
+Beyond quantitative metrics, the system provides valuable qualitative benefits:
+- **Explainability**: Users receive human-readable explanations for fraud determinations
+- **Transparency**: Clear confidence scores help users make informed decisions
+- **Adaptability**: The system can explain its reasoning even for incorrect predictions
+
+## 7. Current Limitations and Future Work
+
+### 7.1 Known Issues
+
+1. **Production Readiness**: Current accuracy levels require improvement for production deployment
+2. **Output Formatting**: Fine-tuning reduced strict format adherence, requiring further optimization
+3. **Model Deployment**: Technical constraints prevented deploying the fine-tuned model in the current app version
+
+### 7.2 Future Improvements
+
+**Enhanced Training Methods**: 
+- GRPO implementation with adequate GPU resources for reward-based optimization
+- Advanced prompt engineering for better output consistency
+- Larger, more diverse training datasets
+
+**Technical Enhancements**:
+- Federated learning for privacy-preserving model improvements
+- Multi-model ensemble approaches for better accuracy
+- Advanced preprocessing and feature extraction techniques
+
+## 8. Conclusion
+
+This project successfully demonstrates the feasibility of privacy-preserving SMS fraud detection using local LLMs. The technical architecture addresses key challenges in mobile AI deployment while maintaining user privacy and providing explainable results. The significant performance improvements achieved through fine-tuning validate the approach, while the modular architecture provides a foundation for future enhancements.
+
+The combination of modern Android development practices, sophisticated ML techniques, and privacy-first design creates a compelling solution for SMS fraud detection. While current limitations prevent immediate production deployment, the technical foundation and demonstrated improvements provide a clear path toward a robust, privacy-preserving fraud detection system.
+
+The project contributes valuable insights into mobile LLM deployment, privacy-preserving AI applications, and the practical challenges of implementing explainable AI in consumer applications. These learnings extend beyond fraud detection to broader applications of local AI processing in security-sensitive domains.

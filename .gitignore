@@ -1,0 +1,98 @@
+# Kotlin/Android/Jetpack Compose Project .gitignore
+
+# Gradle build output
+/build/
+/app/build/
+/.gradle/
+/.idea/
+/.kotlin/
+*.iml
+
+# Local properties and configuration
+local.properties
+*.keystore
+*.jks
+
+# Android Studio/IntelliJ
+*.ipr
+*.iws
+*.bak
+*.swp
+*.tmp
+*.orig
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Generated files
+*.class
+*.dex
+*.apk
+*.ap_
+*.aar
+*.jar
+*.war
+*.so
+*.dll
+*.exe
+
+# Resource cache
+app/src/main/res/raw/
+app/src/main/res/drawable-*/.DS_Store
+app/src/main/res/mipmap-*/.DS_Store
+
+# Build artifacts
+app/build/
+build/
+out/
+captures/
+outputs/
+generated/
+bin/
+gen/
+tmp/
+logs/
+
+# Test output
+test-output/
+*.ec
+
+# Model files and large data artifacts
+*.pt
+*.onnx
+*.h5
+*.tflite
+*.pb
+*.ckpt
+*.bin
+*.npz
+*.npy
+
+# LLM debug/test artifacts
+*.model
+*.token
+*.cache
+
+# Misc
+*.orig
+*.rej
+
+# Ignore IDE workspace settings
+.idea/
+.vscode/
+*.code-workspace
+
+
+# Ignore gradle wrapper binaries
+gradle/wrapper/gradle-wrapper.jar
+
+# Ignore local test data
+app/src/test/**/*.db
+app/src/test/**/*.json
+
+# Ignore backup and migration scripts
+*.bak
+*.old
+*.sql

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- SMS permissions -->
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SmsFraudDetector"
+        tools:targetApi="31">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmsFraudDetector">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name=".onboarding.OnboardingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.SmsFraudDetector"
+            android:screenOrientation="portrait" />
+        <!-- Summary Activity -->
+        <activity
+            android:name=".SummaryActivity"
+            android:exported="false"
+            android:label="Message Summary"
+            android:theme="@style/Theme.SmsFraudDetector"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- History Activity -->
+        <activity
+            android:name=".HistoryActivity"
+            android:exported="false"
+            android:label="Message History"
+            android:theme="@style/Theme.SmsFraudDetector"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- LLM Debug Activity -->
+        <activity
+            android:name=".LlmDebugActivity"
+            android:exported="false"
+            android:label="LLM Debug"
+            android:theme="@style/Theme.SmsFraudDetector"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- Model Download Activity -->
+        <activity
+            android:name=".ModelDownloadActivity"
+            android:exported="false"
+            android:label="Download Models"
+            android:theme="@style/Theme.SmsFraudDetector"
+            android:parentActivityName=".MainActivity" />
+    
+            <!-- Share Receiver Activity -->
+            <activity
+                android:name=".ShareReceiverActivity"
+                android:exported="true"
+                android:label="Analyze Message"
+                android:theme="@style/Theme.SmsFraudDetector">
+                <intent-filter>
+                    <action android:name="android.intent.action.SEND" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <data android:mimeType="text/plain" />
+                </intent-filter>
+            </activity>
+    
+            <!-- SMS Receiver -->
+            <receiver
+                android:name=".SmsReceiver"
+            android:exported="true">
+            <intent-filter android:priority="1000">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Fraud Detection Service -->
+        <service
+            android:name=".FraudDetectionService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse" />
+
+    </application>
+
+</manifest>
