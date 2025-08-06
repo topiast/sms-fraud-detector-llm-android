@@ -29,7 +29,7 @@ Thumbs.db
 # Generated files
 *.class
 *.dex
-*.apk
+# *.apk
 *.ap_
 *.aar
 *.jar
