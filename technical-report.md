@@ -12,9 +12,9 @@ Technical challenges:
         - To deal with the class imbalance, I created a dataset with about 800 fraud messages using locally run gemma3:12b model. The challenge here was to create a dataset that was diverse. I used AI to create 52 different themes for the fraud messages. I also had 4 diffrent writing styles, 2 different languages, 3 different lengths, and 3 different message styles. I then randomly sampled with those defined parameters about 800 prompts which were used to further generate the messages.
         - For both datasets I used locally run gemma3:12b model to generate exmample answers to the messages. In the answers I wanted that the model provided and explanation why the message is fraud or not and an estimated score for the fraud probability.
         - So I ended up with a dataset consisting of 2612 messages.
-   - Instruction tuning and prompting
+   - Prompt engineering:
         - This step consited of mulple iterations of changing the system prompt and evaluating the results.
-        - It was quite obvious from the start that insturction tuning and prompting alone was not enough. The model was easily tricked and confused by different types of messages. It either flagged too many messages as fraud or too few.
+        - It was quite obvious from the start that prompting alone was not enough. The model was easily tricked and confused by different types of messages. It either flagged too many messages as fraud or too few.
         - I learned a lot of creating effective prompts and how to structure the input data for the model.
     - Fine-tuning the model
         - I wanted to try GRPO training the model with classification accuracy as the objective. However, I did not get good results with it. This might be due to the lack of GPU resources, since I had to use extremely memory efficient training arguments.
@@ -85,5 +85,5 @@ Technical challenges:
 3. Future improvements & know issues:
     - The model accuracy is not yet good enough for production use. Even though the performance improved a lot with fine-tuning, I noticed that even with false prediction the model is able to provide a reasonable explanation. However, the score is often not in line with the explanation or is set to 0.5. This is where GRPO training could be useful.
     - After fine tuning the model's ability to strictly follow the format requested decreased. This could be an issue with the dataset or the fine-tuning process that needs further investigation.
-    - Due to technical challenges, and time constraints, the fine-tuned model is not deployed in the app at the time of submission. Instead, the app relies on google/gemma-3n-E4B-it model with instruction tuning.
+    - Due to technical challenges, and time constraints, the fine-tuned model is not deployed in the app at the time of submission. Instead, the app relies on google/gemma-3n-E4B-it model with prompt engineering.
             
