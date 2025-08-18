@@ -150,8 +150,12 @@ class FraudDetectionService : Service() {
 
                 val job = launch {
                     try {
-                        val messageBody = intent.getStringExtra(KEY_MESSAGE_BODY)!!
-                        val sender = intent.getStringExtra(KEY_SENDER)!!
+                        val messageBody = intent.getStringExtra(KEY_MESSAGE_BODY)
+                        val sender = intent.getStringExtra(KEY_SENDER)
+                        if (messageBody == null) {
+                            Log.e("FraudDetectionService", "Intent is missing message body, cannot process.")
+                            return@launch
+                        }
 
                         // 1. Show a unique "processing" notification with a cancel action
                         notificationService.sendCheckingNotification(messageBody, sender, reportId)
@@ -261,7 +265,7 @@ class FraudDetectionService : Service() {
         }
     }
 
-    private fun updateNotification(messageBody: String, sender: String, reportId: String, analysisResult: FraudAnalysisResult) {
+    private fun updateNotification(messageBody: String, sender: String?, reportId: String, analysisResult: FraudAnalysisResult) {
         val notificationService = NotificationService(applicationContext)
         val notificationId = reportId.hashCode()
         if (analysisResult.isFraud) {
